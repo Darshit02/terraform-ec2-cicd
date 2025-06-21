@@ -23,6 +23,6 @@
 ##  Notes:
 - Replace AMI ID with latest Ubuntu AMI for your region.
 - Update app deployment commands in `deploy.sh`.
-- also connect your AWSd account with AWS CLI to make API calls 
+- also connect your AWS account with AWS CLI to make API calls 
 
 ##  Done!
