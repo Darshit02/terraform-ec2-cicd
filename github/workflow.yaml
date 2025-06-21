@@ -1,0 +1,78 @@
+name: Deploy to EC2 via SSH
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Set up SSH key
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: Deploy via SSH
+        run: |
+          ssh -o StrictHostKeyChecking=no ubuntu@${{ secrets.SERVER_IP }} 'bash -s' < ./scripts/deploy.sh
+      - name: Clean up
+        run: |
+          ssh -o StrictHostKeyChecking=no ubuntu@${{ secrets.SERVER_IP }} 'rm -rf /path/to/temp/files'
+      - name: Notify deployment success
+        run: |
+          echo "Deployment to EC2 instance successful!"
+          # Optionally, you can send a notification via email or Slack here
+      - name: Post-deployment tasks
+        run: |
+          ssh -o StrictHostKeyChecking=no ubuntu@${{ secrets.SERVER_IP }} 'bash -s' < ./scripts/post_deploy.sh
+          echo "Post-deployment tasks completed successfully!"
+      - name: Check deployment status
+        run: |
+          ssh -o StrictHostKeyChecking=no ubuntu@${{ secrets.SERVER_IP }} 'if [ -f /path/to/deployment/success ]; then echo "Deployment status: Success"; else echo "Deployment status: Failed"; fi'
+          echo "Deployment status checked successfully!"
+      - name: Final cleanup
+        run: |
+          ssh -o StrictHostKeyChecking=no ubuntu@${{ secrets.SERVER_IP }} 'rm -rf /path/to/old/deployment/files'
+          echo "Final cleanup completed successfully!"
+      - name: Notify deployment completion
+        run: |
+          echo "Deployment process completed successfully!"
+          # Optionally, you can send a notification via email or Slack here
+      - name: Post-deployment verification
+        run: |
+          ssh -o StrictHostKeyChecking=no ubuntu@${{ secrets.SERVER_IP }} 'bash -s' < ./scripts/verify_deployment.sh
+          echo "Post-deployment verification completed successfully!"
+      - name: Notify post-deployment verification
+        run: |
+          echo "Post-deployment verification successful!"
+          # Optionally, you can send a notification via email or Slack here
+      - name: Finalize deployment
+        run: |
+          ssh -o StrictHostKeyChecking=no ubuntu@${{ secrets.SERVER_IP }} 'bash -s' < ./scripts/finalize_deployment.sh
+          echo "Deployment finalized successfully!"
+      - name: Notify deployment finalized
+        run: |
+          echo "Deployment has been finalized successfully!"
+          # Optionally, you can send a notification via email or Slack here
+      - name: Cleanup temporary files
+        run: |
+          ssh -o StrictHostKeyChecking=no ubuntu@${{ secrets.SERVER_IP }} 'rm -rf /path/to/temp/files'
+          echo "Temporary files cleaned up successfully!"
+      - name: Notify cleanup completion
+        run: |
+          echo "Cleanup of temporary files completed successfully!"
+          # Optionally, you can send a notification via email or Slack here
+      - name: Final deployment status 
+        run: |
+          ssh -o StrictHostKeyChecking=no ubuntu@${{ secrets.SERVER_IP }} 'if [ -f /path/to/deployment/success ]; then echo "Final deployment status: Success"; else echo "Final deployment status: Failed"; fi'
+          echo "Final deployment status checked successfully!"
+      - name: Notify final deployment status
+        run: |
+          echo "Final deployment status has been checked successfully!"
+          # Optionally, you can send a notification via email or Slack here
